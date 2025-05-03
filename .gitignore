@@ -1,0 +1,10 @@
+# Ignore compiled binary and object files
+game
+*.o
+*.out
+
+# VSCode config (optional)
+.vscode/
+
+# macOS system files
+.DS_Store
