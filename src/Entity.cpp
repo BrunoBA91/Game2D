@@ -30,7 +30,7 @@ void Entity::update() {
     // base implementation: do nothing
 }
 
-void Entity::render(SDL_Renderer* renderer) const {
+void Entity::render(SDL_Renderer* renderer) {
     SDL_RenderCopy(renderer, texture, nullptr, &rect);
 }
 

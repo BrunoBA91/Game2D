@@ -39,10 +39,10 @@ bool Game::init(const std::string& title, int width, int height) {
     }
 
     player = new Player();
-    if (!player->init(renderer, "assets/player.png", 100, 100, 64, 64)) return false;
+    if (!player->init(renderer, "assets/player_idle.png", 100, 100, 48, 48)) return false;
 
     enemy = new Enemy();
-    if (!enemy->init(renderer, "assets/player.png", 400, 300, 64, 64)) return false;
+    if (!enemy->init(renderer, "assets/player.png", 400, 300, 48, 48)) return false;
 
     entityManager.add(player);
     entityManager.add(enemy);

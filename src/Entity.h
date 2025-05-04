@@ -10,7 +10,7 @@ public:
 
     virtual bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h);
     virtual void update(); // can be overridden
-    virtual void render(SDL_Renderer* renderer) const;
+    virtual void render(SDL_Renderer* renderer);
     virtual void clean();
 
 protected:
