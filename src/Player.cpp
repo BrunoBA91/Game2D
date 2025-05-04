@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include "Collision.h"
 
 Player::Player(AnimationManager& animMgr) : 
     speed(5), vx(0), vy(0)
@@ -48,7 +49,7 @@ void Player::handleInput() {
     if (keystates[SDL_SCANCODE_RIGHT]) vx =  speed;
 }
 
-void Player::update() {
+void Player::update(const std::vector<SDL_Rect>& walls) {
     const Uint8* keys = SDL_GetKeyboardState(nullptr);
     bool moving =
         keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_DOWN] ||
@@ -68,10 +69,27 @@ void Player::update() {
         animationController.play("idle");
     }
 
+    SDL_Rect nextRect = rect;
+    nextRect.x += vx;
+    nextRect.y += vy;
+
+    bool collided = false;
+
+    for (const SDL_Rect& wall : walls) {
+        if (Collision::AABB(nextRect, wall)) {
+            collided = true;
+            break;
+        }
+    }
+
+    if (!collided) {
+        rect = nextRect;
+    }
+
     animationController.update();
 
-    rect.x += vx;
-    rect.y += vy;
+    //rect.x += vx;
+    //rect.y += vy;
 }
 
 void Player::render(SDL_Renderer* renderer) {

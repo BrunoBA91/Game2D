@@ -9,7 +9,7 @@ public:
     Enemy(AnimationManager& animMgr);
     ~Enemy();
 
-    void update() override;
+    void update(const std::vector<SDL_Rect>& walls) override;
     void render(SDL_Renderer* renderer) override;
 
 private:

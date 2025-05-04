@@ -28,4 +28,6 @@ private:
     Enemy* enemy;
 
     bool running;
+
+    std::vector<SDL_Rect> walls;
 };

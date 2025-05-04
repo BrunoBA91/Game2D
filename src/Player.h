@@ -11,7 +11,7 @@ public:
 
     bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) override;
     void handleInput();
-    void update() override;
+    void update(const std::vector<SDL_Rect>& walls) override;
     void render(SDL_Renderer* renderer) override;
     void clean() override;
 

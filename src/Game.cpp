@@ -1,6 +1,8 @@
 #include "Game.h"
 #include <iostream>
 
+
+
 Game::Game()
     : window(nullptr), renderer(nullptr), running(false) {}
 
@@ -50,6 +52,11 @@ bool Game::init(const std::string& title, int width, int height) {
     entityManager.add(player);
     entityManager.add(enemy);
 
+    walls = {
+        {200, 200, 100, 100},
+        {0, 568, 800, 32}
+    };
+
     running = true;
     return true;
 }
@@ -77,12 +84,17 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    entityManager.updateAll();
+    entityManager.updateAll(walls);
 }
 
-void Game::render() {
+void Game::render() {  
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+
+    for (const SDL_Rect& wall : walls) {
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderDrawRect(renderer, &wall);
+    }  
 
     entityManager.renderAll(renderer);
 

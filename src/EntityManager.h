@@ -7,7 +7,7 @@ public:
     ~EntityManager();
 
     void add(Entity* entity); // Entity* can be Player*, Enemy*, etc.
-    void updateAll();
+    void updateAll(const std::vector<SDL_Rect>& walls);
     void renderAll(SDL_Renderer* renderer);
     void cleanAll();
 

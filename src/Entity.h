@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
+#include <vector>
 
 class Entity {
 public:
@@ -9,7 +10,7 @@ public:
     virtual ~Entity();
 
     virtual bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h);
-    virtual void update(); // can be overridden
+    virtual void update(const std::vector<SDL_Rect>& walls) = 0;
     virtual void render(SDL_Renderer* renderer);
     virtual void clean();
 
