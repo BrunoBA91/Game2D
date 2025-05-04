@@ -4,7 +4,7 @@
 class Animation {
 public:
     Animation();
-    Animation(int frameW, int frameH, int numFrames, int frameTime, int row = 0, int spacingX = 0, int spacingY = 0);
+    Animation(int frameW, int frameH, int numFrames, int frameTime, int row = 0, int spacingX = 0, int spacingY = 0, int marginX = 0, int marginY = 0);
 
     void update();
     void reset();
@@ -23,4 +23,6 @@ private:
     int rowIndex;        // vertical row in sprite sheet
     int spacingX;
     int spacingY;
+    int marginX;
+    int marginY;
 };

@@ -4,9 +4,9 @@ Animation::Animation()
     : frameWidth(0), frameHeight(0), totalFrames(1),
       currentFrame(0), frameDuration(100), elapsedTime(0), rowIndex(0) {}
 
-Animation::Animation(int frameW, int frameH, int numFrames, int frameTime, int row, int spacingX, int spacingY)
+Animation::Animation(int frameW, int frameH, int numFrames, int frameTime, int row, int spacingX, int spacingY, int marginX, int marginY)
     : frameWidth(frameW), frameHeight(frameH), totalFrames(numFrames),
-      currentFrame(0), frameDuration(frameTime), elapsedTime(0), rowIndex(row), spacingX(spacingX), spacingY(spacingY) {}
+      currentFrame(0), frameDuration(frameTime), elapsedTime(0), rowIndex(row), spacingX(spacingX), spacingY(spacingY), marginX(marginX), marginY(marginY) {}
 
 void Animation::update() {
     elapsedTime += 16; // assuming ~60 FPS
@@ -34,8 +34,8 @@ void Animation::setRow(int row) {
 
 SDL_Rect Animation::getCurrentFrameRect() const {
     SDL_Rect srcRect = {
-        currentFrame * (frameWidth + spacingX),
-        rowIndex * (frameHeight + spacingY),
+        marginX + currentFrame * (frameWidth + spacingX),
+        marginY + rowIndex * (frameHeight + spacingY),
         frameWidth,
         frameHeight
     };

@@ -28,8 +28,10 @@ bool AnimationManager::loadFromFile(const std::string& filePath, int defaultFram
         int frameH = anim.value("height", defaultFrameHeight);
         int spacingX = anim.value("spacingX", 0);
         int spacingY = anim.value("spacingY", 0);
+        int marginX = anim.value("marginX", 0);
+        int marginY = anim.value("marginY", 0);
 
-        animations[name] = Animation(frameW, frameH, frames, frameTime, row, spacingX, spacingY);
+        animations[name] = Animation(frameW, frameH, frames, frameTime, row, spacingX, spacingY, marginX, marginY);
     }
 
     return true;

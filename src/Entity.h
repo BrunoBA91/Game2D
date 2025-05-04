@@ -16,9 +16,13 @@ public:
     void setFlip(SDL_RendererFlip f) { flip = f; }
     SDL_RendererFlip getFlip() const { return flip; }
 
+    void setOrigin(int x, int y) { origin = {x,y}; }
+
 protected:
     SDL_Texture* texture;
     SDL_Rect rect;
 
     SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+    SDL_Point origin = {0,0};
 };
