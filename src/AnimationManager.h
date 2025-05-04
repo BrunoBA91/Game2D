@@ -6,7 +6,7 @@
 
 class AnimationManager {
 public:
-    bool loadFromFile(const std::string& filePath, int frameWidth, int frameHeight);
+    bool loadFromFile(const std::string& filePath, int defaultFrameWidth, int defaultFrameHeight);
     const Animation& get(const std::string& name) const;
     bool has(const std::string& name) const;
 

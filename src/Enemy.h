@@ -1,14 +1,19 @@
 #pragma once
 #include "Entity.h"
+#include "AnimationController.h"
+
+class AnimationManager; // forward declaration
 
 class Enemy : public Entity {
 public:
-    Enemy();
+    Enemy(AnimationManager& animMgr);
     ~Enemy();
 
     void update() override;
+    void render(SDL_Renderer* renderer) override;
 
 private:
-    int speed;
-    int direction; // -1 = left, 1 = right
+    AnimationController animationController;
+    float speed = 2.0f;
+    int direction = -1; // -1 = left, 1 = right
 };

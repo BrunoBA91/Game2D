@@ -4,7 +4,7 @@
 
 using json = nlohmann::json;
 
-bool AnimationManager::loadFromFile(const std::string& filePath, int frameWidth, int frameHeight) {
+bool AnimationManager::loadFromFile(const std::string& filePath, int defaultFrameWidth, int defaultFrameHeight) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
         std::cerr << "Failed to open animation config file: " << filePath << std::endl;
@@ -24,8 +24,12 @@ bool AnimationManager::loadFromFile(const std::string& filePath, int frameWidth,
         int row = anim["row"];
         int frames = anim["frames"];
         int frameTime = anim["frameTime"];
+        int frameW = anim.value("width", defaultFrameWidth);
+        int frameH = anim.value("height", defaultFrameHeight);
+        int spacingX = anim.value("spacingX", 0);
+        int spacingY = anim.value("spacingY", 0);
 
-        animations[name] = Animation(frameWidth, frameHeight, frames, frameTime, row);
+        animations[name] = Animation(frameW, frameH, frames, frameTime, row, spacingX, spacingY);
     }
 
     return true;

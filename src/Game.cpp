@@ -39,13 +39,13 @@ bool Game::init(const std::string& title, int width, int height) {
     }
 
     AnimationManager animMgr;
-    animMgr.loadFromFile("assets/animations.json", 48, 48);
+    animMgr.loadFromFile("assets/animations.json", 64, 64);
 
     player = new Player(animMgr);
     if (!player->init(renderer, "assets/player_spritesheet.png", 100, 100, 48, 48)) return false;
 
-    enemy = new Enemy();
-    if (!enemy->init(renderer, "assets/player.png", 400, 300, 48, 48)) return false;
+    enemy = new Enemy(animMgr);
+    if (!enemy->init(renderer, "assets/enemy_spritesheet.png", 400, 300, 48, 48)) return false;
 
     entityManager.add(player);
     entityManager.add(enemy);
