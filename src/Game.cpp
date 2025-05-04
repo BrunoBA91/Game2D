@@ -53,7 +53,7 @@ bool Game::init(const std::string& title, int width, int height) {
     entityManager.add(enemy);
 
     walls = {
-        {200, 200, 100, 100},
+        {0, 0, 800, 32},
         {0, 568, 800, 32}
     };
 

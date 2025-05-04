@@ -4,7 +4,7 @@
 
 🧱 INITIAL SETUP
 ---------------------------
-git init                         # Initialize a new Git repo
+git init                        # Initialize a new Git repo
 git remote add origin <url>     # Link to GitHub repository
 git branch -M main              # Rename current branch to 'main'
 git push -u origin main         # Push local 'main' and set upstream
@@ -22,9 +22,9 @@ git commit -am "Message"        # Stage + commit modified files
 🔍 INSPECTING CHANGES
 ---------------------------
 git diff                        # See unstaged changes
-git diff --staged              # See staged changes
+git diff --staged               # See staged changes
 git log                         # View commit history
-git show <commit>              # See a specific commit
+git show <commit>               # See a specific commit
 
 
 🔄 RESTORING & UNDOING
