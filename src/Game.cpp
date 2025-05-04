@@ -38,8 +38,11 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
-    player = new Player();
-    if (!player->init(renderer, "assets/player_idle.png", 100, 100, 48, 48)) return false;
+    AnimationManager animMgr;
+    animMgr.loadFromFile("assets/animations.json", 48, 48);
+
+    player = new Player(animMgr);
+    if (!player->init(renderer, "assets/player_spritesheet.png", 100, 100, 48, 48)) return false;
 
     enemy = new Enemy();
     if (!enemy->init(renderer, "assets/player.png", 400, 300, 48, 48)) return false;

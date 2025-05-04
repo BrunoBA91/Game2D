@@ -1,10 +1,11 @@
 #pragma once
 #include "Entity.h"
 #include "Animation.h"
+#include "AnimationManager.h"
 
 class Player : public Entity {
 public:
-    Player();
+    Player(AnimationManager& animMgr);
     ~Player();
 
     bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) override;
@@ -17,5 +18,7 @@ private:
     int speed;
     int vx, vy;
     
+    Animation* currentAnimation;
     Animation idleAnimation;
+    Animation runAnimation;
 };

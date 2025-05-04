@@ -4,11 +4,12 @@
 class Animation {
 public:
     Animation();
-    Animation(int frameW, int frameH, int numFrames, int frameTime);
+    Animation(int frameW, int frameH, int numFrames, int frameTime, int row = 0);
 
     void update();
     void reset();
     void setFrame(int frame);  // optional
+    void setRow(int row);      // switch animation row
 
     SDL_Rect getCurrentFrameRect() const;
 
@@ -19,4 +20,5 @@ private:
     int currentFrame;
     int frameDuration;   // ms per frame
     int elapsedTime;     // ms since last frame change
+    int rowIndex;        // vertical row in sprite sheet
 };

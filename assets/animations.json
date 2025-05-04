@@ -1,0 +1,9 @@
+{
+    "animations": [
+      { "name": "idle", "row": 0, "frames": 10, "frameTime": 100 },
+      { "name": "run", "row": 1, "frames": 9, "frameTime": 100 },
+      { "name": "jump", "row": 2, "frames": 4, "frameTime": 100 },
+      { "name": "push", "row": 3, "frames": 10, "frameTime": 100 },
+      { "name": "pull", "row": 4, "frames": 8, "frameTime": 100 }
+    ]
+  }  

@@ -3,10 +3,13 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-Player::Player() : 
-    speed(5), vx(0), vy(0),
-    idleAnimation(48, 48, 10, 100)
-{}
+Player::Player(AnimationManager& animMgr) : 
+    speed(5), vx(0), vy(0)
+    {
+        idleAnimation = animMgr.get("idle");
+        runAnimation = animMgr.get("run");
+        currentAnimation = &idleAnimation;
+    }
 
 Player::~Player() {}
 
@@ -49,17 +52,19 @@ void Player::update() {
         keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_RIGHT];
 
     if (!moving) {
-        idleAnimation.update();
+        currentAnimation = &idleAnimation;
     } else {
-        idleAnimation.reset();
+        currentAnimation = &runAnimation;
     }
+
+    currentAnimation->update();
 
     rect.x += vx;
     rect.y += vy;
 }
 
 void Player::render(SDL_Renderer* renderer) {
-    SDL_Rect srcRect = idleAnimation.getCurrentFrameRect();
+    SDL_Rect srcRect = currentAnimation->getCurrentFrameRect();
 
     SDL_RenderCopy(renderer, texture, &srcRect, &rect);
 }
