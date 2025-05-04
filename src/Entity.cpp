@@ -31,7 +31,7 @@ void Entity::update() {
 }
 
 void Entity::render(SDL_Renderer* renderer) {
-    SDL_RenderCopy(renderer, texture, nullptr, &rect);
+    SDL_RenderCopyEx(renderer, texture, nullptr, &rect, 0.0, nullptr, getFlip());
 }
 
 void Entity::clean() {

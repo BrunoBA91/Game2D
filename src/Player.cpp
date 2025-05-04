@@ -6,9 +6,12 @@
 Player::Player(AnimationManager& animMgr) : 
     speed(5), vx(0), vy(0)
     {
-        idleAnimation = animMgr.get("idle");
-        runAnimation = animMgr.get("run");
-        currentAnimation = &idleAnimation;
+        animationController.add("idle", animMgr.get("idle"));
+        animationController.add("run", animMgr.get("run"));
+        animationController.add("jump", animMgr.get("jump"));
+        animationController.add("push", animMgr.get("push"));
+        animationController.add("pull", animMgr.get("pull"));
+        animationController.play("idle");
     }
 
 Player::~Player() {}
@@ -51,22 +54,30 @@ void Player::update() {
         keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_DOWN] ||
         keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_RIGHT];
 
-    if (!moving) {
-        currentAnimation = &idleAnimation;
+    if (keys[SDL_SCANCODE_LEFT]) {
+        setFlip(SDL_FLIP_HORIZONTAL);
+    }
+    else if (keys[SDL_SCANCODE_RIGHT]) {
+        setFlip(SDL_FLIP_NONE);
+    }
+        
+
+    if (moving) {
+        animationController.play("run");
     } else {
-        currentAnimation = &runAnimation;
+        animationController.play("idle");
     }
 
-    currentAnimation->update();
+    animationController.update();
 
     rect.x += vx;
     rect.y += vy;
 }
 
 void Player::render(SDL_Renderer* renderer) {
-    SDL_Rect srcRect = currentAnimation->getCurrentFrameRect();
+    SDL_Rect srcRect = animationController.getCurrentFrameRect();
 
-    SDL_RenderCopy(renderer, texture, &srcRect, &rect);
+    SDL_RenderCopyEx(renderer, texture, &srcRect, &rect, 0.0, nullptr, getFlip());
 }
 
 void Player::clean() {

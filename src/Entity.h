@@ -13,7 +13,12 @@ public:
     virtual void render(SDL_Renderer* renderer);
     virtual void clean();
 
+    void setFlip(SDL_RendererFlip f) { flip = f; }
+    SDL_RendererFlip getFlip() const { return flip; }
+
 protected:
     SDL_Texture* texture;
     SDL_Rect rect;
+
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
 };

@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "Animation.h"
 #include "AnimationManager.h"
+#include "AnimationController.h"
 
 class Player : public Entity {
 public:
@@ -18,7 +19,5 @@ private:
     int speed;
     int vx, vy;
     
-    Animation* currentAnimation;
-    Animation idleAnimation;
-    Animation runAnimation;
+    AnimationController animationController;
 };
