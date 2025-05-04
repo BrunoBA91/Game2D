@@ -11,6 +11,8 @@ public:
     void renderAll(SDL_Renderer* renderer);
     void cleanAll();
 
+    const std::vector<Entity*>& getEntities() const;
+
 private:
     std::vector<Entity*> entities;
 };

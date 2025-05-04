@@ -49,7 +49,7 @@ void Player::handleInput() {
     if (keystates[SDL_SCANCODE_RIGHT]) vx =  speed;
 }
 
-void Player::update(const std::vector<SDL_Rect>& walls) {
+void Player::update(const std::vector<SDL_Rect>& walls, const std::vector<Entity*>& others) {
     const Uint8* keys = SDL_GetKeyboardState(nullptr);
     bool moving =
         keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_DOWN] ||
@@ -77,6 +77,16 @@ void Player::update(const std::vector<SDL_Rect>& walls) {
 
     for (const SDL_Rect& wall : walls) {
         if (Collision::AABB(nextRect, wall)) {
+            collided = true;
+            break;
+        }
+    }
+
+    for (Entity* other : others) {
+        if (other == this) continue;
+        if (other->getType() != EntityType::Enemy) continue;
+
+        if (Collision::AABB(nextRect, other->getRect())) {
             collided = true;
             break;
         }

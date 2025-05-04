@@ -9,8 +9,10 @@ public:
     Enemy(AnimationManager& animMgr);
     ~Enemy();
 
-    void update(const std::vector<SDL_Rect>& walls) override;
+    void update(const std::vector<SDL_Rect>& walls, const std::vector<Entity*>& others) override;
     void render(SDL_Renderer* renderer) override;
+
+    EntityType getType() const override { return EntityType::Enemy; }
 
 private:
     AnimationController animationController;

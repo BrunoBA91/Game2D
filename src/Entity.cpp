@@ -26,7 +26,7 @@ bool Entity::init(SDL_Renderer* renderer, const std::string& imagePath, int x, i
     return true;
 }
 
-void Entity::update(const std::vector<SDL_Rect>& walls) {
+void Entity::update(const std::vector<SDL_Rect>& walls, const std::vector<Entity*>& others) {
     // base implementation: do nothing
 }
 

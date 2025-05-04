@@ -6,8 +6,12 @@ void EntityManager::add(Entity* entity) {
 
 void EntityManager::updateAll(const std::vector<SDL_Rect>& walls) {
     for (auto& e : entities) {
-        e->update(walls);
+        e->update(walls, entities);
     }
+}
+
+const std::vector<Entity*>& EntityManager::getEntities() const {
+    return entities;
 }
 
 void EntityManager::renderAll(SDL_Renderer* renderer) {

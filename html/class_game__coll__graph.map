@@ -1,0 +1,17 @@
+<map id="Game" name="Game">
+<area shape="rect" id="Node000001" title=" " alt="" coords="138,1166,250,1436"/>
+<area shape="rect" id="Node000002" href="$class_entity_manager.html" title=" " alt="" coords="5,894,129,1062"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,1062,89,1102,101,1141,132,1204,127,1207,96,1143,84,1103,75,1063"/>
+<area shape="rect" id="Node000003" href="$class_player.html" title=" " alt="" coords="259,854,358,1103"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="267,1104,250,1151,245,1149,262,1102"/>
+<area shape="rect" id="Node000004" href="$class_entity.html" title=" " alt="" coords="129,460,213,791"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="196,803,209,828,218,836,227,840,237,844,248,852,261,868,257,872,244,856,235,848,225,845,215,841,205,831,191,806"/>
+<area shape="rect" id="Node000007" href="$class_enemy.html" title=" " alt="" coords="154,894,234,1062"/>
+<area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="175,805,177,829,184,894,178,895,171,830,170,805"/>
+<area shape="rect" id="Node000005" href="$class_animation_controller.html" title=" " alt="" coords="271,521,429,730"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="361,729,361,780,357,830,355,837,350,836,351,829,356,779,356,729"/>
+<area shape="poly" id="edge8_Node000007_Node000005" title=" " alt="" coords="277,731,252,772,231,816,212,879,207,877,226,814,247,770,272,728"/>
+<area shape="rect" id="Node000006" href="$class_animation.html" title=" " alt="" coords="271,5,429,397"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="353,397,353,504,347,504,347,397"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="197,1062,197,1149,191,1149,191,1062"/>
+</map>

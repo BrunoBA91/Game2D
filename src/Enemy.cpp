@@ -12,7 +12,11 @@ Enemy::Enemy(AnimationManager& animMgr) {
 
 Enemy::~Enemy() {}
 
-void Enemy::update(const std::vector<SDL_Rect>& walls) {
+void Enemy::update(const std::vector<SDL_Rect>& walls, const std::vector<Entity*>& others) {
+    
+    (void)walls;
+    (void)others;
+    
     rect.x += speed * direction;
 
     if (rect.x <= 0 || rect.x + rect.w >= 800) {
