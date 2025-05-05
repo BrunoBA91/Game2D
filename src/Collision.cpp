@@ -1,6 +1,6 @@
 #include "Collision.h"
 
-bool Collision::AABB(const SDL_Rect& a, const SDL_Rect& b) {
+bool Collision::checkAABBCollision(const SDL_Rect& a, const SDL_Rect& b) {
     return (
         a.x < b.x + b.w &&
         a.x + a.w > b.x &&
