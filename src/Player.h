@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "AnimationManager.h"
 #include "AnimationController.h"
+#include <SDL2/SDL.h>
 
 class Player : public Entity {
 public:
@@ -18,8 +19,13 @@ public:
     EntityType getType() const override { return EntityType::Player; }
     
 private:
-    int speed;
-    int vx, vy;
-    
     AnimationController animationController;
+
+    SDL_FPoint velocity;
+    float gravity = 0.5f;
+    float jumpStrength = -10;
+    float moveSpeed = 4.0f;
+    bool isOnGround = false;
+
+    void applyPhysics(const std::vector<SDL_Rect>& walls);
 };

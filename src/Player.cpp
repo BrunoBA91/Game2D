@@ -5,7 +5,7 @@
 #include "Collision.h"
 
 Player::Player(AnimationManager& animMgr) : 
-    speed(5), vx(0), vy(0)
+        velocity{0,0}
     {
         animationController.add("idle", animMgr.get("idle"));
         animationController.add("run", animMgr.get("run"));
@@ -38,68 +38,82 @@ bool Player::init(SDL_Renderer* renderer, const std::string& imagePath, int x, i
 }
 
 void Player::handleInput() {
-    const Uint8* keystates = SDL_GetKeyboardState(nullptr);
+    const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 
-    vx = 0;
-    vy = 0;
+    velocity.x = 0;
 
-    if (keystates[SDL_SCANCODE_UP])    vy = -speed;
-    if (keystates[SDL_SCANCODE_DOWN])  vy =  speed;
-    if (keystates[SDL_SCANCODE_LEFT])  vx = -speed;
-    if (keystates[SDL_SCANCODE_RIGHT]) vx =  speed;
+    if (keystate[SDL_SCANCODE_LEFT]) {
+        velocity.x = -moveSpeed;
+    } else if (keystate[SDL_SCANCODE_RIGHT]) {
+        velocity.x = moveSpeed;
+    }
+
+    if (keystate[SDL_SCANCODE_SPACE] && isOnGround) {
+        velocity.y = jumpStrength;
+        isOnGround = false;
+    }
 }
 
 void Player::update(const std::vector<SDL_Rect>& walls, const std::vector<Entity*>& others) {
-    const Uint8* keys = SDL_GetKeyboardState(nullptr);
-    bool moving =
-        keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_DOWN] ||
-        keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_RIGHT];
+    handleInput();
 
-    if (keys[SDL_SCANCODE_LEFT]) {
-        setFlip(SDL_FLIP_HORIZONTAL);
-    }
-    else if (keys[SDL_SCANCODE_RIGHT]) {
-        setFlip(SDL_FLIP_NONE);
-    }
-        
+    velocity.y += gravity;
 
-    if (moving) {
+    applyPhysics(walls);
+
+    if (!isOnGround) {
+        animationController.play("jump");
+    } else if (velocity.x != 0) {
         animationController.play("run");
     } else {
         animationController.play("idle");
     }
+    
+    if (velocity.x < 0) {
+        flip = SDL_FLIP_HORIZONTAL;
+    } else if (velocity.x > 0) {
+        flip = SDL_FLIP_NONE;
+    }
+    animationController.update();
+}
 
-    SDL_Rect nextRect = rect;
-    nextRect.x += vx;
-    nextRect.y += vy;
+void Player::applyPhysics(const std::vector<SDL_Rect>& walls) {
+    isOnGround = false;
 
-    bool collided = false;
+    SDL_Rect nextRect = getRect();
+    nextRect.x += static_cast<int>(velocity.x);
 
     for (const SDL_Rect& wall : walls) {
-        if (Collision::AABB(nextRect, wall)) {
-            collided = true;
+        if (Collision::checkAABBCollision(nextRect, wall)) {
+            if (velocity.x > 0) {
+                rect.x = wall.x - rect.w;
+            } else if (velocity.x < 0) {
+                rect.x = wall.x + wall.w;
+            }
+            velocity.x = 0;
             break;
         }
     }
 
-    for (Entity* other : others) {
-        if (other == this) continue;
-        if (other->getType() != EntityType::Enemy) continue;
+    rect.x += static_cast<int>(velocity.x);
 
-        if (Collision::AABB(nextRect, other->getRect())) {
-            collided = true;
+    nextRect = getRect();
+    nextRect.y += static_cast<int>(velocity.y);
+
+    for (const SDL_Rect& wall : walls) {
+        if (Collision::checkAABBCollision(nextRect, wall)) {
+            if (velocity.y > 0) {
+                rect.y = wall.y - rect.h;
+                isOnGround = true;
+            } else if (velocity.y < 0) {
+                rect.y = wall.y + wall.h;
+            }
+            velocity.y = 0;
             break;
         }
     }
 
-    if (!collided) {
-        rect = nextRect;
-    }
-
-    animationController.update();
-
-    //rect.x += vx;
-    //rect.y += vy;
+    rect.y += static_cast<int>(velocity.y);
 }
 
 void Player::render(SDL_Renderer* renderer) {
