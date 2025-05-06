@@ -51,30 +51,37 @@ void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f
     Vector2f step = (steps > 0) ? Vector2f(delta.x / steps, delta.y / steps) : Vector2f(0.0f, 0.0f);
 
     for (int i = 0; i < steps; ++i) {
-        SDL_Rect next = rect;
-        next.x = static_cast<int>(position.x + step.x);
-        next.y = static_cast<int>(position.y + step.y);
-
-        bool collided = false;
+        // Move in X and check collision
+        position.x += step.x;
+        syncRect();
         for (const SDL_Rect& wall : walls) {
-            if (checkAABBCollision(next, wall)) {
-                if (std::abs(step.y) >= std::abs(step.x)) {
-                    // Y-axis resolution only
-                    position.y = (step.y > 0.0f) ? wall.y - rect.h : wall.y + wall.h;
-                    velocity.y = 0.0f;
-                } else {
-                    // X-axis resolution only
-                    position.x = (step.x > 0.0f) ? wall.x - rect.w : wall.x + wall.w;
-                    velocity.x = 0.0f;
+            if (checkAABBCollision(rect, wall)) {
+                if (step.x > 0.0f) {
+                    position.x = wall.x - rect.w;
+                } else if (step.x < 0.0f) {
+                    position.x = wall.x + wall.w;
                 }
+                velocity.x = 0.0f;
                 syncRect();
-                return;
+                break;
             }
         }
 
-        position.x += step.x;
+        // Move in Y and check collision
         position.y += step.y;
         syncRect();
+        for (const SDL_Rect& wall : walls) {
+            if (checkAABBCollision(rect, wall)) {
+                if (step.y > 0.0f) {
+                    position.y = wall.y - rect.h;
+                } else if (step.y < 0.0f) {
+                    position.y = wall.y + wall.h;
+                }
+                velocity.y = 0.0f;
+                syncRect();
+                break;
+            }
+        }
     }
 }
 
