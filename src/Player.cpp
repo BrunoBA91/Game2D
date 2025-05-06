@@ -80,41 +80,65 @@ void Player::update(const std::vector<SDL_Rect>& walls, const std::vector<Entity
 void Player::applyPhysics(const std::vector<SDL_Rect>& walls) {
     isOnGround = false;
 
-    SDL_Rect nextRect = getRect();
-    nextRect.x += static_cast<int>(velocity.x);
+    resolveHorizontalCollisions(walls);
+    resolveVerticalCollisions(walls);
+    checkIfStanding(walls);
+
+}
+
+void Player::resolveHorizontalCollisions(const std::vector<SDL_Rect>& walls) {
+    SDL_Rect nextX = rect;
+    nextX.x += static_cast<int>(velocity.x);
 
     for (const SDL_Rect& wall : walls) {
-        if (Collision::checkAABBCollision(nextRect, wall)) {
+        if (Collision::checkAABBCollision(nextX, wall)) {
             if (velocity.x > 0) {
                 rect.x = wall.x - rect.w;
             } else if (velocity.x < 0) {
                 rect.x = wall.x + wall.w;
             }
             velocity.x = 0;
-            break;
+            return;
         }
     }
 
-    rect.x += static_cast<int>(velocity.x);
+    rect.x = nextX.x;
+}
 
-    nextRect = getRect();
-    nextRect.y += static_cast<int>(velocity.y);
+void Player::resolveVerticalCollisions(const std::vector<SDL_Rect>& walls) {
+    SDL_Rect nextY = rect;
+    nextY.y += static_cast<int>(velocity.y);
 
     for (const SDL_Rect& wall : walls) {
-        if (Collision::checkAABBCollision(nextRect, wall)) {
+        if (Collision::checkAABBCollision(nextY, wall)) {
             if (velocity.y > 0) {
                 rect.y = wall.y - rect.h;
-                isOnGround = true;
             } else if (velocity.y < 0) {
                 rect.y = wall.y + wall.h;
             }
             velocity.y = 0;
-            break;
+            return;
         }
     }
 
-    rect.y += static_cast<int>(velocity.y);
+    rect.y = nextY.y;
 }
+
+void Player::checkIfStanding(const std::vector<SDL_Rect>& walls) {
+    SDL_Rect probe = rect;
+    probe.y += 1;
+
+    for (const SDL_Rect& wall : walls) {
+        if (Collision::checkAABBCollision(probe, wall)) {
+            isOnGround = true;
+            return;
+        }
+    }
+
+    isOnGround = false;
+}
+
+
 
 void Player::render(SDL_Renderer* renderer) {
     SDL_Rect srcRect = animationController.getCurrentFrameRect();

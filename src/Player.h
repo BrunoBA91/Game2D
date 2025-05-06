@@ -28,4 +28,7 @@ private:
     bool isOnGround = false;
 
     void applyPhysics(const std::vector<SDL_Rect>& walls);
+    void resolveHorizontalCollisions(const std::vector<SDL_Rect>& walls);
+    void resolveVerticalCollisions(const std::vector<SDL_Rect>& walls);
+    void checkIfStanding(const std::vector<SDL_Rect>& walls);
 };
