@@ -4,9 +4,9 @@ void EntityManager::add(Entity* entity) {
     entities.push_back(entity);
 }
 
-void EntityManager::updateAll(const std::vector<SDL_Rect>& walls) {
+void EntityManager::updateAll(const std::vector<SDL_Rect>& walls, float deltaTime) {
     for (auto& e : entities) {
-        e->update(walls, entities);
+        e->update(walls, entities, deltaTime);
     }
 }
 

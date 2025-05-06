@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "PhysicsBody.h"
 #include "AnimationController.h"
 
 class AnimationManager; // forward declaration
@@ -9,13 +10,29 @@ public:
     Enemy(AnimationManager& animMgr);
     ~Enemy();
 
-    void update(const std::vector<SDL_Rect>& walls, const std::vector<Entity*>& others) override;
+    bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) override;
+    void update(const std::vector<SDL_Rect>& walls,
+                const std::vector<Entity*>& others,
+                float deltaTime) override;
     void render(SDL_Renderer* renderer) override;
+    void clean() override;
 
     EntityType getType() const override { return EntityType::Enemy; }
 
+    void setFlip(SDL_RendererFlip f) override { flip = f; }
+    SDL_RendererFlip getFlip() const override { return flip; }
+    void setOrigin(int x, int y) override { origin = {x, y}; }
+
+    const SDL_Rect& getRect() const override { return physics.getRect(); }
+
 private:
+    SDL_Texture* texture = nullptr;
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    SDL_Point origin = {0, 0};
+
+    PhysicsBody physics;
     AnimationController animationController;
-    float speed = 2.0f;
-    int direction = -1; // -1 = left, 1 = right
+
+    float speed = 40.0f;
+    int direction = -1;  // -1 = left, 1 = right
 };

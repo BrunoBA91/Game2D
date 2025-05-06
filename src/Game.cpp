@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
-
+#include <deque>
+#include <numeric>
 
 
 Game::Game()
@@ -62,12 +63,36 @@ bool Game::init(const std::string& title, int width, int height) {
 }
 
 void Game::run() {
-    SDL_Event e;
+    const int targetFPS = 60;
+    const int frameDelay = 1000 / targetFPS;
+
+    std::deque<float> frameTimes;
+    const size_t maxSamples = 10;
+
+    Uint32 lastTime = SDL_GetTicks();
+
     while (running) {
+        Uint32 currentTime = SDL_GetTicks();
+        float deltaTime = (currentTime - lastTime) / 1000.0f;
+        lastTime = currentTime;
+
+        // Store this frame's delta time
+        frameTimes.push_back(deltaTime);
+        if (frameTimes.size() > maxSamples) {
+            frameTimes.pop_front();
+        }
+
+        // Compute average delta time
+        deltaTime = std::accumulate(frameTimes.begin(), frameTimes.end(), 0.0f) / frameTimes.size();
+
         handleEvents();
-        update();
+        update(deltaTime);
         render();
-        SDL_Delay(16); // ~60 FPS
+
+        Uint32 frameTime = SDL_GetTicks() - currentTime;
+        if (frameTime < frameDelay) {
+            SDL_Delay(frameDelay - frameTime);
+        }
     }
 }
 
@@ -79,12 +104,10 @@ void Game::handleEvents() {
             running = false;
         }
     }
-
-    player->handleInput();
 }
 
-void Game::update() {
-    entityManager.updateAll(walls);
+void Game::update(float deltaTime) {
+    entityManager.updateAll(walls, deltaTime);
 }
 
 void Game::render() {  

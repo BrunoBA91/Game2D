@@ -17,7 +17,7 @@ public:
 
 private:
     void handleEvents();
-    void update();
+    void update(float deltaTime);
     void render();
 
     SDL_Window* window;
