@@ -44,6 +44,12 @@ void Player::update(const std::vector<SDL_Rect>& walls,
 
     checkIfStanding(walls);
 
+    if (isOnGround) {
+        coyoteTimer = coyoteTime;  // reset when grounded
+    } else {
+        coyoteTimer -= deltaTime;  // count down
+    }
+
     const auto& vel = physics.getVelocity();
     if (!isOnGround) {
         animationController.play("jump");
@@ -81,9 +87,10 @@ void Player::handleInput() {
         velocity.x = moveSpeed;
     }
 
-    if (keystate[SDL_SCANCODE_SPACE] && isOnGround) {
+    if (keystate[SDL_SCANCODE_SPACE] && coyoteTimer > 0.0f) {
         velocity.y = jumpStrength;
         isOnGround = false;
+        coyoteTimer = 0.0f; // Consume coyote jump
     }
 
     physics.setVelocity(velocity.x, velocity.y);

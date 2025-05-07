@@ -33,11 +33,14 @@ private:
     PhysicsBody physics;
     AnimationController animationController;
 
-    float gravity = 100.0f;
-    float jumpStrength = -350.0f;
-    float moveSpeed = 75.0f;
+    float gravity = 1500.0f;
+    float maxFallSpeed = 900.0f;
+    float moveSpeed = 300.0f;
+    float jumpStrength = -650.0f;
     bool isOnGround = false;
-    const float maxFallSpeed = 500.0f;
+
+    float coyoteTime = 0.1f;
+    float coyoteTimer = 0.0f;
 
     void handleInput();
     void checkIfStanding(const std::vector<SDL_Rect>& walls);
