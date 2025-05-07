@@ -42,6 +42,11 @@ private:
     float coyoteTime = 0.1f;
     float coyoteTimer = 0.0f;
 
+    float jumpBufferTime = 0.1f;   // 100 ms window
+    float jumpBufferTimer = 0.0f;  // countdown
+    bool wantsToJump = false;      // player pressed jump
+
+
     void handleInput();
     void checkIfStanding(const std::vector<SDL_Rect>& walls);
 };

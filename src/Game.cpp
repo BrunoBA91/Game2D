@@ -55,7 +55,10 @@ bool Game::init(const std::string& title, int width, int height) {
 
     walls = {
         {0, 0, 800, 32},
-        {0, 568, 800, 32}
+        {0, 568, 800, 32},
+        {100, 450, 50, 50},
+        {300, 450, 100, 50},
+        {500, 450, 100, 50}
     };
 
     running = true;

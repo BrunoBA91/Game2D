@@ -39,17 +39,39 @@ void Player::update(const std::vector<SDL_Rect>& walls,
                     float deltaTime) {
     handleInput();
 
+    // Apply gravity
     physics.applyGravity(gravity, deltaTime);
-    physics.moveWithCollision(walls, physics.getVelocity() * deltaTime);
 
+    // Apply movement with collision
+    physics.moveWithCollision(walls, physics.getVelocity() * deltaTime);
+    
+    // Update grounded state
     checkIfStanding(walls);
 
+    // Coyote Time
     if (isOnGround) {
         coyoteTimer = coyoteTime;  // reset when grounded
     } else {
         coyoteTimer -= deltaTime;  // count down
     }
 
+    // Jump buffering
+    if (jumpBufferTimer > 0.0f) {
+        jumpBufferTimer -= deltaTime;
+
+        if (coyoteTimer > 0.0f) {
+            Vector2f velocity = physics.getVelocity();
+            velocity.y = jumpStrength;
+            physics.setVelocity(velocity.x, velocity.y);
+
+            isOnGround = false;
+            coyoteTimer = 0.0f;
+            jumpBufferTimer = 0.0f;
+            wantsToJump = false;
+        }
+    }
+
+    // Animation Logic
     const auto& vel = physics.getVelocity();
     if (!isOnGround) {
         animationController.play("jump");
@@ -87,11 +109,10 @@ void Player::handleInput() {
         velocity.x = moveSpeed;
     }
 
-    if (keystate[SDL_SCANCODE_SPACE] && coyoteTimer > 0.0f) {
-        velocity.y = jumpStrength;
-        isOnGround = false;
-        coyoteTimer = 0.0f; // Consume coyote jump
-    }
+    if (keystate[SDL_SCANCODE_SPACE]) {
+        wantsToJump = true;
+        jumpBufferTimer = jumpBufferTime;
+    }    
 
     physics.setVelocity(velocity.x, velocity.y);
 }
