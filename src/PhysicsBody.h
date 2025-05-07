@@ -28,5 +28,5 @@ private:
     SDL_Rect rect;
 
     void syncRect();
-    bool checkAABBCollision(const SDL_Rect& a, const SDL_Rect& b);
+    bool checkAABBCollision(const SDL_Rect& other) const;
 };

@@ -1,5 +1,6 @@
 #include "PhysicsBody.h"
 #include <cmath>
+#include "Collision.h"
 
 PhysicsBody::PhysicsBody() : position(0, 0), velocity(0, 0), rect{0, 0, 0, 0} {}
 
@@ -55,7 +56,7 @@ void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f
         position.x += step.x;
         syncRect();
         for (const SDL_Rect& wall : walls) {
-            if (checkAABBCollision(rect, wall)) {
+            if (checkAABBCollision(wall)) {
                 if (step.x > 0.0f) {
                     position.x = wall.x - rect.w;
                 } else if (step.x < 0.0f) {
@@ -71,7 +72,7 @@ void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f
         position.y += step.y;
         syncRect();
         for (const SDL_Rect& wall : walls) {
-            if (checkAABBCollision(rect, wall)) {
+            if (checkAABBCollision(wall)) {
                 if (step.y > 0.0f) {
                     position.y = wall.y - rect.h;
                 } else if (step.y < 0.0f) {
@@ -90,9 +91,6 @@ void PhysicsBody::syncRect() {
     rect.y = static_cast<int>(position.y);
 }
 
-bool PhysicsBody::checkAABBCollision(const SDL_Rect& a, const SDL_Rect& b) {
-    return a.x < b.x + b.w &&
-           a.x + a.w > b.x &&
-           a.y < b.y + b.h &&
-           a.y + a.h > b.y;
+bool PhysicsBody::checkAABBCollision(const SDL_Rect& other) const {
+    return Collision::checkAABBCollision(this->rect, other);
 }
