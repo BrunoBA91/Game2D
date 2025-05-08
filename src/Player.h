@@ -3,6 +3,7 @@
 #include "PhysicsBody.h"
 #include "AnimationController.h"
 #include "AnimationManager.h"
+#include "TransformComponent.h"
 #include <SDL2/SDL.h>
 
 class Player : public Entity {
@@ -18,19 +19,19 @@ public:
     void render(SDL_Renderer* renderer) override;
     void clean() override;
 
+    TransformComponent transform;
+
     EntityType getType() const override { return EntityType::Player; }
     void setFlip(SDL_RendererFlip f) override { flip = f; }
     SDL_RendererFlip getFlip() const override { return flip; }
     void setOrigin(int x, int y) override { origin = {x, y}; }
-
-    const SDL_Rect& getRect() const override { return physics.getRect(); }
 
 private:
     SDL_Texture* texture = nullptr;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     SDL_Point origin = {0, 0};
 
-    PhysicsBody physics;
+    PhysicsBody physicsBody;
     AnimationController animationController;
 
     float gravity = 1500.0f;

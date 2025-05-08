@@ -3,6 +3,8 @@
 #include <vector>
 #include "Vector2f.h"
 
+class TransformComponent; // Forward declaration
+
 class PhysicsBody {
 public:
     PhysicsBody();
@@ -21,11 +23,17 @@ public:
     Vector2f getPosition() const;
     Vector2f getVelocity() const;
 
+    void attachTransform(TransformComponent* t);
+
+    // (Optional) Getter if needed elsewhere
+    TransformComponent* getTransform() const;
+
 private:
-    Vector2f position;
     Vector2f velocity;
     float maxFallSpeed = 500.0f;
     SDL_Rect rect;
+
+    TransformComponent* transform = nullptr;
 
     void syncRect();
     bool checkAABBCollision(const SDL_Rect& other) const;

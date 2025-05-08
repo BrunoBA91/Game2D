@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "PhysicsBody.h"
 #include "AnimationController.h"
+#include "TransformComponent.h"
 
 class AnimationManager; // forward declaration
 
@@ -17,20 +18,20 @@ public:
     void render(SDL_Renderer* renderer) override;
     void clean() override;
 
+    TransformComponent transform;
+
     EntityType getType() const override { return EntityType::Enemy; }
 
     void setFlip(SDL_RendererFlip f) override { flip = f; }
     SDL_RendererFlip getFlip() const override { return flip; }
     void setOrigin(int x, int y) override { origin = {x, y}; }
 
-    const SDL_Rect& getRect() const override { return physics.getRect(); }
-
 private:
     SDL_Texture* texture = nullptr;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     SDL_Point origin = {0, 0};
 
-    PhysicsBody physics;
+    PhysicsBody physicsBody;
     AnimationController animationController;
 
     float speed = 40.0f;

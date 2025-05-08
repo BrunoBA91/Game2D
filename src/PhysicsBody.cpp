@@ -1,16 +1,29 @@
 #include "PhysicsBody.h"
 #include <cmath>
 #include "Collision.h"
+#include "TransformComponent.h"
 
-PhysicsBody::PhysicsBody() : position(0, 0), velocity(0, 0), rect{0, 0, 0, 0} {}
+PhysicsBody::PhysicsBody() : velocity(0, 0), rect{0, 0, 0, 0} {}
+
+void PhysicsBody::attachTransform(TransformComponent* t) {
+    transform = t;
+}
+
+TransformComponent* PhysicsBody::getTransform() const {
+    return transform;
+}
 
 void PhysicsBody::init(float x, float y, int w, int h) {
-    position = {x, y};
+    if (!transform) return;
+    
+    transform->position = {x, y};
     rect = {static_cast<int>(x), static_cast<int>(y), w, h};
 }
 
 void PhysicsBody::setPosition(float x, float y) {
-    position = {x, y};
+    if (!transform) return;
+    
+    transform->position = {x, y};
     syncRect();
 }
 
@@ -23,7 +36,7 @@ void PhysicsBody::setMaxFallSpeed(float maxSpeed) {
 }
 
 Vector2f PhysicsBody::getPosition() const {
-    return position;
+    return transform ? transform->position : Vector2f(0, 0);
 }
 
 Vector2f PhysicsBody::getVelocity() const {
@@ -42,10 +55,23 @@ void PhysicsBody::applyGravity(float gravity, float deltaTime) {
 }
 
 void PhysicsBody::update(float deltaTime) {
-    // Placeholder if needed later
+    if (!transform) return;
+
+    transform->position += velocity * deltaTime;
+    syncRect();
 }
 
 void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f delta) {
+    if (!transform) return;
+    
+    // Optimization: skip if there's no movement requested
+    if (delta.x == 0.0f && delta.y == 0.0f) return;
+
+    // Summary:
+    // Incrementally moves the entity along the delta vector,
+    // resolving collisions along X and Y separately. This prevents
+    // tunneling and gives better control over collision resolution order.
+
     const float stepSize = 1.0f;
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     int steps = static_cast<int>(std::ceil(distance / stepSize));
@@ -53,14 +79,14 @@ void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f
 
     for (int i = 0; i < steps; ++i) {
         // Move in X and check collision
-        position.x += step.x;
+        transform->position.x += step.x;
         syncRect();
         for (const SDL_Rect& wall : walls) {
             if (checkAABBCollision(wall)) {
                 if (step.x > 0.0f) {
-                    position.x = wall.x - rect.w;
+                    transform->position.x = wall.x - rect.w;
                 } else if (step.x < 0.0f) {
-                    position.x = wall.x + wall.w;
+                    transform->position.x = wall.x + wall.w;
                 }
                 velocity.x = 0.0f;
                 syncRect();
@@ -69,14 +95,14 @@ void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f
         }
 
         // Move in Y and check collision
-        position.y += step.y;
+        transform->position.y += step.y;
         syncRect();
         for (const SDL_Rect& wall : walls) {
             if (checkAABBCollision(wall)) {
                 if (step.y > 0.0f) {
-                    position.y = wall.y - rect.h;
+                    transform->position.y = wall.y - rect.h;
                 } else if (step.y < 0.0f) {
-                    position.y = wall.y + wall.h;
+                    transform->position.y = wall.y + wall.h;
                 }
                 velocity.y = 0.0f;
                 syncRect();
@@ -87,8 +113,10 @@ void PhysicsBody::moveWithCollision(const std::vector<SDL_Rect>& walls, Vector2f
 }
 
 void PhysicsBody::syncRect() {
-    rect.x = static_cast<int>(position.x);
-    rect.y = static_cast<int>(position.y);
+    if (!transform) return;
+    
+    rect.x = static_cast<int>(transform->position.x);
+    rect.y = static_cast<int>(transform->position.y);
 }
 
 bool PhysicsBody::checkAABBCollision(const SDL_Rect& other) const {

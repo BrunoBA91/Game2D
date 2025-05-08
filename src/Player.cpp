@@ -9,6 +9,8 @@ Player::Player(AnimationManager& animMgr) {
     animationController.add("run", animMgr.get("run"));
     animationController.add("jump", animMgr.get("jump"));
     animationController.play("idle");
+
+    physicsBody.attachTransform(&transform);
 }
 
 Player::~Player() {
@@ -29,8 +31,8 @@ bool Player::init(SDL_Renderer* renderer, const std::string& imagePath, int x, i
         return false;
     }
 
-    physics.init(static_cast<float>(x), static_cast<float>(y), w, h);
-    physics.setMaxFallSpeed(maxFallSpeed);
+    physicsBody.init(static_cast<float>(x), static_cast<float>(y), w, h);
+    physicsBody.setMaxFallSpeed(maxFallSpeed);
     return true;
 }
 
@@ -40,10 +42,10 @@ void Player::update(const std::vector<SDL_Rect>& walls,
     handleInput();
 
     // Apply gravity
-    physics.applyGravity(gravity, deltaTime);
+    physicsBody.applyGravity(gravity, deltaTime);
 
     // Apply movement with collision
-    physics.moveWithCollision(walls, physics.getVelocity() * deltaTime);
+    physicsBody.moveWithCollision(walls, physicsBody.getVelocity() * deltaTime);
     
     // Update grounded state
     checkIfStanding(walls);
@@ -60,9 +62,9 @@ void Player::update(const std::vector<SDL_Rect>& walls,
         jumpBufferTimer -= deltaTime;
 
         if (coyoteTimer > 0.0f) {
-            Vector2f velocity = physics.getVelocity();
+            Vector2f velocity = physicsBody.getVelocity();
             velocity.y = jumpStrength;
-            physics.setVelocity(velocity.x, velocity.y);
+            physicsBody.setVelocity(velocity.x, velocity.y);
 
             isOnGround = false;
             coyoteTimer = 0.0f;
@@ -72,7 +74,7 @@ void Player::update(const std::vector<SDL_Rect>& walls,
     }
 
     // Animation Logic
-    const auto& vel = physics.getVelocity();
+    const auto& vel = physicsBody.getVelocity();
     if (!isOnGround) {
         animationController.play("jump");
     } else if (vel.x != 0.0f) {
@@ -87,7 +89,14 @@ void Player::update(const std::vector<SDL_Rect>& walls,
 
 void Player::render(SDL_Renderer* renderer) {
     SDL_Rect srcRect = animationController.getCurrentFrameRect();
-    SDL_RenderCopyEx(renderer, texture, &srcRect, &getRect(), 0.0, &origin, flip);
+
+    SDL_Rect dstRect;
+    dstRect.x = static_cast<int>(transform.position.x);
+    dstRect.y = static_cast<int>(transform.position.y);
+    dstRect.w = srcRect.w;
+    dstRect.h = srcRect.h;
+
+    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, flip);
 }
 
 void Player::clean() {
@@ -100,7 +109,7 @@ void Player::clean() {
 void Player::handleInput() {
     const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 
-    Vector2f velocity = physics.getVelocity();
+    Vector2f velocity = physicsBody.getVelocity();
     velocity.x = 0;
 
     if (keystate[SDL_SCANCODE_LEFT]) {
@@ -114,16 +123,16 @@ void Player::handleInput() {
         jumpBufferTimer = jumpBufferTime;
     }    
 
-    physics.setVelocity(velocity.x, velocity.y);
+    physicsBody.setVelocity(velocity.x, velocity.y);
 }
 
 void Player::checkIfStanding(const std::vector<SDL_Rect>& walls) {
-    SDL_Rect probe = physics.getRect();
-    probe.y += 1;
+    SDL_Rect feet = physicsBody.getRect();
+    feet.y += 1;
     isOnGround = false;
 
     for (const SDL_Rect& wall : walls) {
-        if (Collision::checkAABBCollision(probe, wall)) {
+        if (Collision::checkAABBCollision(feet, wall)) {
             isOnGround = true;
             break;
         }
