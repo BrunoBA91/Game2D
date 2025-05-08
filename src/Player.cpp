@@ -73,13 +73,20 @@ void Player::update(const std::vector<SDL_Rect>& walls,
         }
     }
 
-    // Animation Logic
     const auto& vel = physicsBody.getVelocity();
+
+    // Flip based on horizontal direction if moving
+    if (vel.x > 0.0f) {
+        setFlip(SDL_FLIP_NONE);
+    } else if (vel.x < 0.0f) {
+        setFlip(SDL_FLIP_HORIZONTAL);
+    }
+
+    // Animation Logic
     if (!isOnGround) {
         animationController.play("jump");
     } else if (vel.x != 0.0f) {
         animationController.play("run");
-        setFlip(vel.x > 0 ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL);
     } else {
         animationController.play("idle");
     }
