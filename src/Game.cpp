@@ -2,6 +2,7 @@
 #include <iostream>
 #include <deque>
 #include <numeric>
+#include "InputManager.h"
 
 
 Game::Game()
@@ -12,11 +13,23 @@ Game::~Game() {
 }
 
 bool Game::init(const std::string& title, int width, int height) {
+    
+    // Adding additional controller types just in case
+    SDL_GameControllerAddMappingsFromFile("assets/gamecontrollerdb.txt");
+    
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << "\n";
         return false;
     }
+    
+    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0) {
+        SDL_Log("SDL_INIT_JOYSTICK failed: %s", SDL_GetError());
+    }
 
+    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) != 0) {
+        SDL_Log("SDL_INIT_GAMECONTROLLER failed: %s", SDL_GetError());
+    }
+    
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         std::cerr << "IMG_Init Error: " << IMG_GetError() << "\n";
         return false;
@@ -40,6 +53,8 @@ bool Game::init(const std::string& title, int width, int height) {
         SDL_Quit();
         return false;
     }
+
+    InputManager::getInstance().initGamepad();
 
     AnimationManager animMgr;
     animMgr.loadFromFile("assets/animations.json", 64, 64);
@@ -100,12 +115,10 @@ void Game::run() {
 }
 
 void Game::handleEvents() {
-    SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_QUIT ||
-           (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
-            running = false;
-        }
+    InputManager::getInstance().update();
+    
+    if (InputManager::getInstance().shouldQuit()) {
+        running = false;
     }
 }
 
@@ -128,6 +141,7 @@ void Game::render() {
 }
 
 void Game::clean() {
+    InputManager::getInstance().closeGamepad();
     entityManager.cleanAll();
 
     if (renderer) {

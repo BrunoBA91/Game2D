@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include "InputManager.h"
 
 Player::Player(AnimationManager& animMgr) {
     animationController.add("idle", animMgr.get("idle"));
@@ -114,18 +115,18 @@ void Player::clean() {
 }
 
 void Player::handleInput() {
-    const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+    auto& input = InputManager::getInstance();
 
     Vector2f velocity = physicsBody.getVelocity();
     velocity.x = 0;
 
-    if (keystate[SDL_SCANCODE_LEFT]) {
+    if (input.isKeyDown(SDL_SCANCODE_LEFT) || input.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         velocity.x = -moveSpeed;
-    } else if (keystate[SDL_SCANCODE_RIGHT]) {
+    } else if (input.isKeyDown(SDL_SCANCODE_RIGHT) || input.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         velocity.x = moveSpeed;
     }
 
-    if (keystate[SDL_SCANCODE_SPACE]) {
+    if (input.isKeyDown(SDL_SCANCODE_SPACE) || input.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_A)) {
         wantsToJump = true;
         jumpBufferTimer = jumpBufferTime;
     }    
