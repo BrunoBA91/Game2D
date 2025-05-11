@@ -2,13 +2,18 @@
 #include "Entity.h"
 #include "PhysicsBody.h"
 #include "AnimationController.h"
-#include "AnimationManager.h"
 #include "TransformComponent.h"
 #include <SDL2/SDL.h>
 
+
+// Forward declarations
+class ResourceManager;
+class AnimationManager;
+class InputManager;
+
 class Player : public Entity {
 public:
-    Player(AnimationManager& animMgr);
+    Player(ResourceManager& resMgr, InputManager& inMgr, AnimationManager& animMgr);
     ~Player();
 
     bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) override;
@@ -33,6 +38,10 @@ private:
 
     PhysicsBody physicsBody;
     AnimationController animationController;
+
+    ResourceManager& resourceManager;
+    InputManager& inputManager;
+    AnimationManager& animationManager;
 
     float gravity = 1500.0f;
     float maxFallSpeed = 900.0f;

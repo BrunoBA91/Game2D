@@ -1,9 +1,11 @@
-// InputManager.cpp
 #include "InputManager.h"
 
-InputManager& InputManager::getInstance() {
-    static InputManager instance;
-    return instance;
+InputManager::InputManager() {
+    
+}
+
+InputManager::~InputManager() {
+    closeGamepad();
 }
 
 void InputManager::initGamepad() {
@@ -31,6 +33,16 @@ bool InputManager::isGamepadButtonDown(SDL_GameControllerButton button) const {
 }
 
 void InputManager::update() {
+    quitRequested = false;
+
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT ||
+           (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
+            quitRequested = true;
+        }
+    }
+
     SDL_PumpEvents(); // Refresh keyboard state
     currentKeyStates = SDL_GetKeyboardState(nullptr);
 
@@ -47,20 +59,15 @@ bool InputManager::isKeyDown(SDL_Scancode key) const {
 }
 
 bool InputManager::isKeyPressed(SDL_Scancode key) const {
-    return currentKeyStates[key] && !previousKeyStates.at(key);
+    bool wasDown = previousKeyStates.count(key) ? previousKeyStates.at(key) : false;
+    return currentKeyStates[key] && !wasDown;
 }
 
 bool InputManager::isKeyReleased(SDL_Scancode key) const {
-    return !currentKeyStates[key] && previousKeyStates.at(key);
+    bool wasDown = previousKeyStates.count(key) ? previousKeyStates.at(key) : false;
+    return !currentKeyStates[key] && wasDown;
 }
 
 bool InputManager::shouldQuit() const {
-    SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_QUIT ||
-           (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
-            return true;
-        }
-    }
-    return false;
+    return quitRequested;
 }

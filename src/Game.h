@@ -1,10 +1,15 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <string>
-#include "Player.h"
-#include "Enemy.h"
+#include <vector>
 #include "EntityManager.h"
+#include "ResourceManager.h"
+#include "InputManager.h"
+#include "AnimationManager.h"
+
+//Forward declarations
+class Player;
+class Enemy;
 
 class Game {
 public:
@@ -23,7 +28,11 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
 
+    ResourceManager resourceManager;
+    InputManager inputManager;
     EntityManager entityManager;
+    AnimationManager animationManager;
+    
     Player* player;
     Enemy* enemy;
 

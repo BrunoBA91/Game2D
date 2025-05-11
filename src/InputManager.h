@@ -1,11 +1,11 @@
-// InputManager.h
 #pragma once
 #include <SDL2/SDL.h>
 #include <unordered_map>
 
 class InputManager {
 public:
-    static InputManager& getInstance();
+    InputManager();
+    ~InputManager();
 
     void update(); // Call this every frame
     bool isKeyDown(SDL_Scancode key) const;
@@ -21,10 +21,10 @@ public:
     bool isGamepadConnected() const;
 
 private:
-    InputManager() = default;
 
     const Uint8* currentKeyStates = nullptr;
     std::unordered_map<SDL_Scancode, bool> previousKeyStates;
 
     SDL_GameController* gamepad = nullptr;
+    bool quitRequested = false;
 };

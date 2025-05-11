@@ -1,8 +1,10 @@
 #include "Enemy.h"
 #include "AnimationManager.h"
-#include <SDL2/SDL_image.h>
+#include "ResourceManager.h"
 
-Enemy::Enemy(AnimationManager& animMgr) {
+Enemy::Enemy(ResourceManager& resMgr, AnimationManager& animMgr) 
+    : resourceManager(resMgr), animationManager(animMgr)
+{
     animationController.add("idle", animMgr.get("enemy_idle"));
     animationController.add("run", animMgr.get("enemy_run"));
     animationController.play("run");
@@ -15,16 +17,11 @@ Enemy::~Enemy() {
 }
 
 bool Enemy::init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) {
-    SDL_Surface* surface = IMG_Load(imagePath.c_str());
-    if (!surface) {
-        SDL_Log("Failed to load enemy sprite: %s", IMG_GetError());
-        return false;
-    }
+    resourceManager.loadTexture("enemy", imagePath, renderer);
+    texture = resourceManager.getTexture("enemy");
 
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
     if (!texture) {
-        SDL_Log("Failed to create enemy texture: %s", SDL_GetError());
+        SDL_Log("Failed to load enemy texture from ResourceManager");
         return false;
     }
 

@@ -3,7 +3,8 @@
 #include <vector>
 #include "Vector2f.h"
 
-class TransformComponent; // Forward declaration
+// Forward declarations
+class TransformComponent; 
 
 class PhysicsBody {
 public:

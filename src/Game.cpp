@@ -1,8 +1,10 @@
-#include "Game.h"
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <deque>
 #include <numeric>
-#include "InputManager.h"
+#include "Game.h"
+#include "Player.h"
+#include "Enemy.h"
 
 
 Game::Game()
@@ -14,7 +16,7 @@ Game::~Game() {
 
 bool Game::init(const std::string& title, int width, int height) {
     
-    // Adding additional controller types just in case
+    // Adding additional game controller types just in case
     SDL_GameControllerAddMappingsFromFile("assets/gamecontrollerdb.txt");
     
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -54,15 +56,14 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
-    InputManager::getInstance().initGamepad();
+    inputManager.initGamepad();
 
-    AnimationManager animMgr;
-    animMgr.loadFromFile("assets/animations.json", 64, 64);
+    animationManager.loadFromFile("assets/animations.json", 64, 64);
 
-    player = new Player(animMgr);
+    player = new Player(resourceManager, inputManager, animationManager);
     if (!player->init(renderer, "assets/player_spritesheet.png", 100, 100, 48, 48)) return false;
 
-    enemy = new Enemy(animMgr);
+    enemy  = new Enemy(resourceManager, animationManager);
     if (!enemy->init(renderer, "assets/enemy_spritesheet.png", 400, 300, 48, 48)) return false;
 
     entityManager.add(player);
@@ -115,9 +116,8 @@ void Game::run() {
 }
 
 void Game::handleEvents() {
-    InputManager::getInstance().update();
-    
-    if (InputManager::getInstance().shouldQuit()) {
+    inputManager.update();
+    if (inputManager.shouldQuit()) {
         running = false;
     }
 }
@@ -141,7 +141,7 @@ void Game::render() {
 }
 
 void Game::clean() {
-    InputManager::getInstance().closeGamepad();
+    inputManager.closeGamepad();
     entityManager.cleanAll();
 
     if (renderer) {

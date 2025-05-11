@@ -1,4 +1,5 @@
 #include "AnimationManager.h"
+#include "json.hpp"
 #include <fstream>
 #include <iostream>
 

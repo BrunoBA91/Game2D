@@ -1,11 +1,12 @@
 #include "Player.h"
 #include "Collision.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <iostream>
 #include "InputManager.h"
+#include "AnimationManager.h"
+#include "ResourceManager.h"
 
-Player::Player(AnimationManager& animMgr) {
+Player::Player(ResourceManager& resMgr, InputManager& inputMgr, AnimationManager& animMgr)
+    : resourceManager(resMgr), inputManager(inputMgr), animationManager(animMgr)
+{
     animationController.add("idle", animMgr.get("idle"));
     animationController.add("run", animMgr.get("run"));
     animationController.add("jump", animMgr.get("jump"));
@@ -19,16 +20,11 @@ Player::~Player() {
 }
 
 bool Player::init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) {
-    SDL_Surface* surface = IMG_Load(imagePath.c_str());
-    if (!surface) {
-        SDL_Log("Failed to load player sprite: %s", IMG_GetError());
-        return false;
-    }
+    resourceManager.loadTexture("player", imagePath, renderer);
+    texture = resourceManager.getTexture("player");
 
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
     if (!texture) {
-        SDL_Log("Failed to create player texture: %s", SDL_GetError());
+        SDL_Log("Failed to load texture from ResourceManager");
         return false;
     }
 
@@ -107,26 +103,17 @@ void Player::render(SDL_Renderer* renderer) {
     SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, getFlip());
 }
 
-void Player::clean() {
-    if (texture) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr;
-    }
-}
-
 void Player::handleInput() {
-    auto& input = InputManager::getInstance();
-
     Vector2f velocity = physicsBody.getVelocity();
     velocity.x = 0;
 
-    if (input.isKeyDown(SDL_SCANCODE_LEFT) || input.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
+    if (inputManager.isKeyDown(SDL_SCANCODE_LEFT) || inputManager.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         velocity.x = -moveSpeed;
-    } else if (input.isKeyDown(SDL_SCANCODE_RIGHT) || input.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
+    } else if (inputManager.isKeyDown(SDL_SCANCODE_RIGHT) || inputManager.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         velocity.x = moveSpeed;
     }
 
-    if (input.isKeyDown(SDL_SCANCODE_SPACE) || input.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_A)) {
+    if (inputManager.isKeyDown(SDL_SCANCODE_SPACE) || inputManager.isGamepadButtonDown(SDL_CONTROLLER_BUTTON_A)) {
         wantsToJump = true;
         jumpBufferTimer = jumpBufferTime;
     }    
@@ -144,5 +131,12 @@ void Player::checkIfStanding(const std::vector<SDL_Rect>& walls) {
             isOnGround = true;
             break;
         }
+    }
+}
+
+void Player::clean() {
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
     }
 }

@@ -4,11 +4,13 @@
 #include "AnimationController.h"
 #include "TransformComponent.h"
 
-class AnimationManager; // forward declaration
+// Forward declarations
+class AnimationManager;
+class ResourceManager; 
 
 class Enemy : public Entity {
 public:
-    Enemy(AnimationManager& animMgr);
+    Enemy(ResourceManager& resMgr, AnimationManager& animMgr);
     ~Enemy();
 
     bool init(SDL_Renderer* renderer, const std::string& imagePath, int x, int y, int w, int h) override;
@@ -33,6 +35,9 @@ private:
 
     PhysicsBody physicsBody;
     AnimationController animationController;
+
+    ResourceManager& resourceManager;
+    AnimationManager& animationManager;
 
     float speed = 40.0f;
     int direction = -1;  // -1 = left, 1 = right

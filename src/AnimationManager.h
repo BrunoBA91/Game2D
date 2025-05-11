@@ -2,7 +2,6 @@
 #include <string>
 #include <unordered_map>
 #include "Animation.h"
-#include "json.hpp"
 
 class AnimationManager {
 public:

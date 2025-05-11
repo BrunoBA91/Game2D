@@ -1,7 +1,7 @@
 #include "PhysicsBody.h"
-#include <cmath>
 #include "Collision.h"
 #include "TransformComponent.h"
+#include <cmath>
 
 PhysicsBody::PhysicsBody() : velocity(0, 0), rect{0, 0, 0, 0} {}
 
