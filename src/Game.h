@@ -18,7 +18,7 @@ public:
     Game();
     ~Game();
 
-    bool init(const std::string& title, AssetStyle style, int width, int height);
+    bool init(const std::string& title, AssetStyle style, int windowWidth, int windowHeight);
     void run();
     void clean();
 
@@ -41,6 +41,9 @@ private:
     bool running;
 
     AssetStyle assetStyle;
+
+    int preferredWindowWidth;
+    int preferredWindowHeight;
 
     std::vector<SDL_Rect> walls;
 };

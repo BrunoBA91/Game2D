@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "Enemy.h"
 
+const int VIRTUAL_WIDTH = 960;
+const int VIRTUAL_HEIGHT = 540;
 
 Game::Game()
     : window(nullptr), renderer(nullptr), running(false) {}
@@ -14,8 +16,15 @@ Game::~Game() {
     clean();
 }
 
-bool Game::init(const std::string& title, AssetStyle style, int width, int height) {
-    
+bool Game::init(const std::string& title, AssetStyle style, int windowWidth, int windowHeight) {
+    assetStyle = style;
+
+    preferredWindowWidth = windowWidth;
+    preferredWindowHeight = windowHeight;
+
+    // Set scaling quality based on asset style
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, (assetStyle == AssetStyle::PixelArt) ? "0" : "2");
+
     // Adding additional game controller types just in case
     SDL_GameControllerAddMappingsFromFile("assets/gamecontrollerdb.txt");
     
@@ -39,21 +48,12 @@ bool Game::init(const std::string& title, AssetStyle style, int width, int heigh
 
     window = SDL_CreateWindow(title.c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        width, height, SDL_WINDOW_SHOWN);
+        windowWidth, windowHeight, SDL_WINDOW_SHOWN);
     if (!window) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << "\n";
         IMG_Quit();
         SDL_Quit();
         return false;
-    }
-
-    assetStyle = style;
-
-    // Set scaling quality based on asset style
-    if (assetStyle == AssetStyle::PixelArt) {
-        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"); // Nearest-neighbor
-    } else {
-        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); // Linear or anisotropic
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -65,7 +65,8 @@ bool Game::init(const std::string& title, AssetStyle style, int width, int heigh
         return false;
     }
 
-    SDL_RenderSetLogicalSize(renderer, width, height);
+    // Set logical size
+    SDL_RenderSetLogicalSize(renderer, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     // Enable integer scaling for pixel art
     if (assetStyle == AssetStyle::PixelArt) {
@@ -86,11 +87,11 @@ bool Game::init(const std::string& title, AssetStyle style, int width, int heigh
     entityManager.add(enemy);
 
     walls = {
-        {0, 0, 800, 32},
-        {0, 568, 800, 32},
-        {100, 450, 50, 50},
-        {300, 450, 100, 50},
-        {500, 450, 100, 50}
+        {0+10, 0+10, VIRTUAL_WIDTH - 20, 32},
+        {0+10, VIRTUAL_HEIGHT - 32 - 10, VIRTUAL_WIDTH - 20, 32},
+        {100, 400, 50, 50},
+        {300, 400, 100, 50},
+        {500, 400, 100, 50}
     };
 
     running = true;
@@ -132,7 +133,7 @@ void Game::run() {
 }
 
 void Game::handleEvents() {
-    inputManager.update();
+    inputManager.update(window, preferredWindowWidth, preferredWindowHeight);
     if (inputManager.shouldQuit()) {
         running = false;
     }
@@ -152,6 +153,11 @@ void Game::render() {
     }  
 
     entityManager.renderAll(renderer);
+
+    // Draw a green debug border around the virtual screen
+    SDL_Rect debugBorder = {0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT};
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // bright green
+    SDL_RenderDrawRect(renderer, &debugBorder);
 
     SDL_RenderPresent(renderer);
 }

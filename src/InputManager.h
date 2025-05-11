@@ -7,7 +7,7 @@ public:
     InputManager();
     ~InputManager();
 
-    void update(); // Call this every frame
+    void update(SDL_Window* window, int preferredWidth, int preferredHeight); // Call this every frame
     bool isKeyDown(SDL_Scancode key) const;
     bool isKeyPressed(SDL_Scancode key) const;
     bool isKeyReleased(SDL_Scancode key) const;

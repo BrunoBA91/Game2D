@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include <iostream>
 
 InputManager::InputManager() {
     
@@ -32,14 +33,27 @@ bool InputManager::isGamepadButtonDown(SDL_GameControllerButton button) const {
     return gamepad && SDL_GameControllerGetButton(gamepad, button);
 }
 
-void InputManager::update() {
+void InputManager::update(SDL_Window* window, int preferredWidth, int preferredHeight) {
     quitRequested = false;
-
-    SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_QUIT ||
-           (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
+    
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
             quitRequested = true;
+        } else if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_ESCAPE) {
+                quitRequested = true;
+            } else if (event.key.keysym.sym == SDLK_f) {
+                // Toggle fullscreen
+                Uint32 currentFlags = SDL_GetWindowFlags(window);
+                if (currentFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+                    SDL_SetWindowFullscreen(window, 0);  // Go windowed         
+                    SDL_SetWindowSize(window, preferredWidth, preferredHeight);
+                    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+                } else {
+                    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // Go fullscreen
+                }
+            }
         }
     }
 

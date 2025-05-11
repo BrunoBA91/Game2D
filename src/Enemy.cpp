@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "AnimationManager.h"
 #include "ResourceManager.h"
+#include "SpriteRenderer.h"
 
 Enemy::Enemy(ResourceManager& resMgr, AnimationManager& animMgr) 
     : resourceManager(resMgr), animationManager(animMgr)
@@ -60,7 +61,7 @@ void Enemy::render(SDL_Renderer* renderer) {
     dstRect.w = srcRect.w;
     dstRect.h = srcRect.h;
 
-    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, nullptr, getFlip());
+    SpriteRenderer::draw(renderer, texture, &srcRect, &dstRect, 0.0, nullptr, getFlip());
 }
 
 void Enemy::clean() {
