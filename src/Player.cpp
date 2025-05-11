@@ -104,7 +104,7 @@ void Player::render(SDL_Renderer* renderer) {
     dstRect.w = srcRect.w;
     dstRect.h = srcRect.h;
 
-    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, flip);
+    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, getFlip());
 }
 
 void Player::clean() {

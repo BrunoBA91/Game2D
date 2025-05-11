@@ -46,8 +46,9 @@ void Enemy::update(const std::vector<SDL_Rect>& walls,
     const SDL_Rect& rect = physicsBody.getRect();
     if (rect.x <= 0 || rect.x + rect.w >= 800) {
         direction *= -1;
-        setFlip(direction < 0 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
     }
+    
+    setFlip(direction < 0 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     animationController.play("run");
     animationController.update();
@@ -62,7 +63,7 @@ void Enemy::render(SDL_Renderer* renderer) {
     dstRect.w = srcRect.w;
     dstRect.h = srcRect.h;
 
-    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, flip);
+    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, getFlip());
 }
 
 void Enemy::clean() {
