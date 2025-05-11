@@ -24,5 +24,4 @@ public:
 
     virtual void setFlip(SDL_RendererFlip f) = 0;
     virtual SDL_RendererFlip getFlip() const = 0;
-    virtual void setOrigin(int x, int y) = 0;
 };

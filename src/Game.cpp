@@ -14,7 +14,7 @@ Game::~Game() {
     clean();
 }
 
-bool Game::init(const std::string& title, int width, int height) {
+bool Game::init(const std::string& title, AssetStyle style, int width, int height) {
     
     // Adding additional game controller types just in case
     SDL_GameControllerAddMappingsFromFile("assets/gamecontrollerdb.txt");
@@ -47,6 +47,15 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
+    assetStyle = style;
+
+    // Set scaling quality based on asset style
+    if (assetStyle == AssetStyle::PixelArt) {
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"); // Nearest-neighbor
+    } else {
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); // Linear or anisotropic
+    }
+
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
         std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << "\n";
@@ -55,6 +64,13 @@ bool Game::init(const std::string& title, int width, int height) {
         SDL_Quit();
         return false;
     }
+
+    SDL_RenderSetLogicalSize(renderer, width, height);
+
+    // Enable integer scaling for pixel art
+    if (assetStyle == AssetStyle::PixelArt) {
+        SDL_RenderSetIntegerScale(renderer, SDL_TRUE);
+    } 
 
     inputManager.initGamepad();
 

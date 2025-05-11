@@ -26,12 +26,10 @@ public:
 
     void setFlip(SDL_RendererFlip f) override { flip = f; }
     SDL_RendererFlip getFlip() const override { return flip; }
-    void setOrigin(int x, int y) override { origin = {x, y}; }
 
 private:
     SDL_Texture* texture = nullptr;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
-    SDL_Point origin = {0, 0};
 
     PhysicsBody physicsBody;
     AnimationController animationController;

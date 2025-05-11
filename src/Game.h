@@ -7,6 +7,8 @@
 #include "InputManager.h"
 #include "AnimationManager.h"
 
+enum class AssetStyle { PixelArt, HDArt };
+
 //Forward declarations
 class Player;
 class Enemy;
@@ -16,7 +18,7 @@ public:
     Game();
     ~Game();
 
-    bool init(const std::string& title, int width, int height);
+    bool init(const std::string& title, AssetStyle style, int width, int height);
     void run();
     void clean();
 
@@ -37,6 +39,8 @@ private:
     Enemy* enemy;
 
     bool running;
+
+    AssetStyle assetStyle;
 
     std::vector<SDL_Rect> walls;
 };

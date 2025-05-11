@@ -3,6 +3,7 @@
 #include "InputManager.h"
 #include "AnimationManager.h"
 #include "ResourceManager.h"
+#include "SpriteRenderer.h"
 
 Player::Player(ResourceManager& resMgr, InputManager& inputMgr, AnimationManager& animMgr)
     : resourceManager(resMgr), inputManager(inputMgr), animationManager(animMgr)
@@ -100,7 +101,7 @@ void Player::render(SDL_Renderer* renderer) {
     dstRect.w = srcRect.w;
     dstRect.h = srcRect.h;
 
-    SDL_RenderCopyEx(renderer, texture, &srcRect, &dstRect, 0.0, &origin, getFlip());
+    SpriteRenderer::draw(renderer, texture, &srcRect, &dstRect, 0.0, nullptr, getFlip());
 }
 
 void Player::handleInput() {
