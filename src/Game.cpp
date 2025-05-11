@@ -48,7 +48,7 @@ bool Game::init(const std::string& title, AssetStyle style, int windowWidth, int
 
     window = SDL_CreateWindow(title.c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        windowWidth, windowHeight, SDL_WINDOW_SHOWN);
+        windowWidth, windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     if (!window) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << "\n";
         IMG_Quit();
