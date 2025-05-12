@@ -99,36 +99,19 @@ bool Game::init(const std::string& title, AssetStyle style, int windowWidth, int
 }
 
 void Game::run() {
-    const int targetFPS = 60;
-    const int frameDelay = 1000 / targetFPS;
 
-    std::deque<float> frameTimes;
-    const size_t maxSamples = 10;
-
-    Uint32 lastTime = SDL_GetTicks();
+    timeManager.setTargetFPS(60);
+    timeManager.setMaxDeltaTime(0.05f);
+    timeManager.setSmoothingWindow(10);
 
     while (running) {
-        Uint32 currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - lastTime) / 1000.0f;
-        lastTime = currentTime;
-
-        // Store this frame's delta time
-        frameTimes.push_back(deltaTime);
-        if (frameTimes.size() > maxSamples) {
-            frameTimes.pop_front();
-        }
-
-        // Compute average delta time
-        deltaTime = std::accumulate(frameTimes.begin(), frameTimes.end(), 0.0f) / frameTimes.size();
+        timeManager.update();
+        float deltaTime = timeManager.getSmoothedDeltaTime();
 
         handleEvents();
         update(deltaTime);
         render();
-
-        Uint32 frameTime = SDL_GetTicks() - currentTime;
-        if (frameTime < frameDelay) {
-            SDL_Delay(frameDelay - frameTime);
-        }
+        
     }
 }
 

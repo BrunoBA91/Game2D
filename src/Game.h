@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "AnimationManager.h"
+#include "TimeManager.h"
 
 enum class AssetStyle { PixelArt, HDArt };
 
@@ -34,11 +35,14 @@ private:
     InputManager inputManager;
     EntityManager entityManager;
     AnimationManager animationManager;
+    TimeManager timeManager;
     
     Player* player;
     Enemy* enemy;
 
     bool running;
+
+    const float maxDeltaTime = 0.05f;
 
     AssetStyle assetStyle;
 

@@ -4,8 +4,8 @@ int main() {
     Game game;
     
     AssetStyle style = AssetStyle::PixelArt;
-    int screenWidth = 1920;
-    int screenHeight = 1080;
+    int screenWidth = 1280;
+    int screenHeight = 720;
 
     if (!game.init("Game2D", style, screenWidth, screenHeight)) return -1;
 
